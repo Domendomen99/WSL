@@ -1,0 +1,54 @@
+services:
+
+  # apache:
+  #  build: .
+  #  container_name: apache-server
+  #  #ports: 
+  #  #  - "8080:80"
+  #  restart: unless-stopped
+  #  networks:
+  #    - internal-network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    depends_on:
+      - webserver
+    command:
+      - "http"
+      - "server:80"
+    environment:
+      NGROK_AUTHTOKEN: 2wHMu7dfu5VadQxmnw0nzdbsBlT_2Xai418r4fF6nHVzoV1wR
+    ports:
+      - 4040:4040
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+  app:
+    container_name: app
+    build: ./app # Costruisci l'immagine usando il Dockerfile nella directory 'app'
+    ports:
+      - "8000" # Esponi la porta 8000 all'interno della rete Docker (non all'esterno)
+    volumes:
+      - ./app/il_tuo_progetto_flask:/app/il_tuo_progetto_flask # Monta il codice sorgente (utile per lo sviluppo)
+    # environment: # Esempio di variabili d'ambiente
+    #   - FLASK_ENV=production
+    networks:
+      - internal-network
+
+  webserver:
+    container_name: server
+    build: ./server # Costruisci l'immagine usando il Dockerfile nella directory 'webserver'
+    #ports:
+    #  - "80:80" # Mappa la porta 80 del container sulla porta 80 del host
+    depends_on:
+      - app # Assicura che il container 'app' sia avviato prima del webserver
+    # volumes: # Esempio per servire statici direttamente dal webserver montando il volume
+    #   - ./app/il_tuo_progetto_flask/static:/usr/local/apache2/htdocs/static # O altra directory configurata nell'apache.conf
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    driver: bridge

@@ -4,7 +4,7 @@ FROM httpd:2.4
 # Copia il file di configurazione personalizzato di Apache per il Virtual Host
 # Lo copiamo in una directory comune per i file di configurazione extra.
 # Il nome del file è arbitrario, ma '.conf' è una convenzione.
-COPY server/apache.conf /usr/local/apache2/conf/extra/httpd-vhosts.conf
+COPY apache.conf /usr/local/apache2/conf/extra/httpd-vhosts.conf
 
 # Abilita i moduli proxy necessari in Apache.
 # Le immagini ufficiali httpd spesso includono già questi moduli,
